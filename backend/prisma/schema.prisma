@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  password        String
+  name            String
+  role            Role     @default(CLIENT)
+  twoFactorSecret String?
+  twoFactorEnabled Boolean @default(false)
+  backupCodes     String[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relaciones
+  bookings Booking[]
+
+  @@map("users")
+}
+
+model Experience {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  description String
+  content     String // Contenido detallado en markdown
+  category    ExperienceType
+  difficulty  Difficulty
+  duration    String // "3 días", "1 semana", etc.
+  price       Float
+  includes    String[] // Array de lo que incluye
+  excludes    String[] // Array de lo que no incluye
+  images      String[] // URLs de imágenes
+  videoUrl    String?
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relaciones
+  dates        ExperienceDate[]
+  bookings     Booking[]
+  testimonials Testimonial[]
+
+  @@map("experiences")
+}
+
+model ExperienceDate {
+  id           String   @id @default(cuid())
+  experienceId String
+  startDate    DateTime
+  endDate      DateTime
+  maxAttendees Int      @default(12)
+  price        Float? // Precio específico para esta fecha (opcional)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  experience Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  bookings   Booking[]
+
+  @@map("experience_dates")
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  userId           String?
+  experienceId     String
+  experienceDateId String
+  
+  // Datos del cliente
+  clientName       String
+  clientEmail      String
+  clientPhone      String
+  attendees        Int           @default(1)
+  
+  // Estado y pago
+  status           BookingStatus @default(PENDING)
+  totalAmount      Float
+  paidAmount       Float         @default(0)
+  stripePaymentId  String?
+  
+  // Notas
+  notes            String?
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  // Relaciones
+  user           User?          @relation(fields: [userId], references: [id])
+  experience     Experience     @relation(fields: [experienceId], references: [id])
+  experienceDate ExperienceDate @relation(fields: [experienceDateId], references: [id])
+
+  @@map("bookings")
+}
+
+model Testimonial {
+  id           String  @id @default(cuid())
+  experienceId String?
+  name         String
+  content      String
+  rating       Int     @default(5)
+  imageUrl     String?
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  experience Experience? @relation(fields: [experienceId], references: [id])
+
+  @@map("testimonials")
+}
+
+model Post {
+  id          String      @id @default(cuid())
+  title       String
+  slug        String      @unique
+  content     String // Contenido en markdown
+  excerpt     String
+  coverImage  String?
+  categoryId  String?
+  isPublished Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relaciones
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  @@map("posts")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  posts Post[]
+
+  @@map("categories")
+}
+
+model InstagramPost {
+  id          String   @id @default(cuid())
+  instagramId String   @unique
+  imageUrl    String
+  caption     String?
+  permalink   String
+  timestamp   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("instagram_posts")
+}
+
+model ContactForm {
+  id          String      @id @default(cuid())
+  type        ContactType
+  name        String
+  email       String
+  phone       String?
+  message     String
+  
+  // Campos específicos para guía personalizado
+  dateRange   String?
+  mountainType String?
+  experience  String?
+  budget      String?
+  
+  isRead      Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("contact_forms")
+}
+
+// Enums
+enum Role {
+  CLIENT
+  ADMIN
+}
+
+enum ExperienceType {
+  INICIACION     // Caminatas y campamentos
+  FORMACION      // Cursos y talleres
+  EXPEDICION     // Alta montaña
+}
+
+enum Difficulty {
+  PRINCIPIANTE
+  INTERMEDIO
+  AVANZADO
+  EXPERTO
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum ContactType {
+  GENERAL
+  CUSTOM_GUIDE
+} 
