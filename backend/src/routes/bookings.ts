@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../server';
 import { sendBookingConfirmationEmail } from '../services/email';
+import { AuthRequest } from '../middleware/auth';
+import { Response } from 'express';
 
 const router = Router();
 
@@ -17,7 +19,7 @@ const createBookingSchema = z.object({
 });
 
 // POST /api/bookings - Crear nueva reserva
-router.post('/', async (req, res) => {
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
     const bookingData = createBookingSchema.parse(req.body);
 
@@ -93,7 +95,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/bookings/:id - Obtener reserva por ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -117,7 +119,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT /api/bookings/:id/confirm - Confirmar reserva (después del pago)
-router.put('/:id/confirm', async (req, res) => {
+router.put('/:id/confirm', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { stripePaymentId, paidAmount } = req.body;
@@ -151,7 +153,7 @@ router.put('/:id/confirm', async (req, res) => {
 });
 
 // PUT /api/bookings/:id/cancel - Cancelar reserva
-router.put('/:id/cancel', async (req, res) => {
+router.put('/:id/cancel', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -174,7 +176,7 @@ router.put('/:id/cancel', async (req, res) => {
 });
 
 // GET /api/bookings - Obtener reservas (para admin)
-router.get('/', async (req, res) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const { status, experienceId, limit = '50', offset = '0' } = req.query;
 

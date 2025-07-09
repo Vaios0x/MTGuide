@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import Stripe from 'stripe';
 import { prisma } from '../server';
+import { AuthRequest } from '../middleware/auth';
+import { Response } from 'express';
 
 const router = Router();
 
@@ -17,7 +19,7 @@ const createPaymentIntentSchema = z.object({
 });
 
 // POST /api/payments/create-intent - Crear payment intent
-router.post('/create-intent', async (req, res) => {
+router.post('/create-intent', async (req: AuthRequest, res: Response) => {
   try {
     const { bookingId, amount } = createPaymentIntentSchema.parse(req.body);
 

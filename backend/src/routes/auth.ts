@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -6,7 +6,7 @@ import { prisma } from '../server';
 import { bruteForce, createAccountLimiter } from '../middleware/rateLimit';
 import { twoFactorService } from '../services/twoFactor';
 import { createLogger } from '../services/logger';
-import { authMiddleware } from '../middleware/auth';
+import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 const logger = createLogger('AuthRoutes');
@@ -24,7 +24,7 @@ const registerSchema = z.object({
 });
 
 // POST /api/auth/login - Iniciar sesión
-router.post('/login', bruteForce.prevent, async (req, res) => {
+router.post('/login', bruteForce.prevent, async (req: AuthRequest, res: Response) => {
   try {
     const { email, password, token } = req.body;
 
@@ -73,7 +73,7 @@ router.post('/login', bruteForce.prevent, async (req, res) => {
 });
 
 // POST /api/auth/register - Registrar usuario
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: AuthRequest, res: Response) => {
   try {
     const { name, email, password } = registerSchema.parse(req.body);
 
@@ -125,7 +125,7 @@ router.post('/register', async (req, res) => {
 });
 
 // GET /api/auth/me - Obtener información del usuario autenticado
-router.get('/me', async (req, res) => {
+router.get('/me', async (req: AuthRequest, res: Response) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
@@ -158,7 +158,7 @@ router.get('/me', async (req, res) => {
 });
 
 // Rutas de 2FA
-router.post('/2fa/setup', authMiddleware, async (req, res) => {
+router.post('/2fa/setup', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.user;
     const secret = await twoFactorService.generateSecret(userId);
@@ -169,7 +169,7 @@ router.post('/2fa/setup', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/2fa/verify', authMiddleware, async (req, res) => {
+router.post('/2fa/verify', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.user;
     const { token } = req.body;
@@ -190,7 +190,7 @@ router.post('/2fa/verify', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/2fa/enable', authMiddleware, async (req, res) => {
+router.post('/2fa/enable', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.user;
     const { token } = req.body;
@@ -214,7 +214,7 @@ router.post('/2fa/enable', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/2fa/disable', authMiddleware, async (req, res) => {
+router.post('/2fa/disable', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.user;
     const { token } = req.body;
@@ -235,7 +235,7 @@ router.post('/2fa/disable', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/2fa/backup', authMiddleware, async (req, res) => {
+router.post('/2fa/backup', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { userId } = req.user;
     const { code } = req.body;

@@ -211,7 +211,7 @@ export async function sendContactFormEmail(contactData: {
       to: 'info@mtguide.com', // Email del administrador
       subject: `Nuevo ${isCustomGuide ? 'Solicitud de Guía Personalizado' : 'Contacto'} - ${contactData.name}`,
       html: emailHtml,
-      replyTo: contactData.email,
+      reply_to: contactData.email,
     });
 
     console.log(`Email de contacto enviado para ${contactData.name}`);

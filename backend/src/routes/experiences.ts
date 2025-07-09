@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../server';
 import { ExperienceType, Difficulty } from '@prisma/client';
+import { AuthRequest } from '../middleware/auth';
+import { Response } from 'express';
 
 const router = Router();
 
@@ -14,7 +16,7 @@ const experienceQuerySchema = z.object({
 });
 
 // GET /api/experiences - Obtener todas las experiencias
-router.get('/', async (req, res) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const query = experienceQuerySchema.parse(req.query);
     
@@ -59,7 +61,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/experiences/:slug - Obtener experiencia por slug
-router.get('/:slug', async (req, res) => {
+router.get('/:slug', async (req: AuthRequest, res: Response) => {
   try {
     const { slug } = req.params;
 
@@ -118,7 +120,7 @@ router.get('/:slug', async (req, res) => {
 });
 
 // GET /api/experiences/category/:category - Obtener experiencias por categoría
-router.get('/category/:category', async (req, res) => {
+router.get('/category/:category', async (req: AuthRequest, res: Response) => {
   try {
     const { category } = req.params;
     

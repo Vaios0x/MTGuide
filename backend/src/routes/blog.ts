@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../server';
+import { AuthRequest } from '../types/auth';
+import { Response } from 'express';
 
 const router = Router();
 
@@ -13,7 +15,7 @@ const postQuerySchema = z.object({
 });
 
 // GET /api/blog/posts - Obtener posts del blog
-router.get('/posts', async (req, res) => {
+router.get('/posts', async (req: AuthRequest, res: Response) => {
   try {
     const query = postQuerySchema.parse(req.query);
     
@@ -64,7 +66,7 @@ router.get('/posts', async (req, res) => {
 });
 
 // GET /api/blog/posts/:slug - Obtener post por slug
-router.get('/posts/:slug', async (req, res) => {
+router.get('/posts/:slug', async (req: AuthRequest, res: Response) => {
   try {
     const { slug } = req.params;
 
@@ -97,7 +99,7 @@ router.get('/posts/:slug', async (req, res) => {
 });
 
 // GET /api/blog/categories - Obtener categorías
-router.get('/categories', async (req, res) => {
+router.get('/categories', async (req: AuthRequest, res: Response) => {
   try {
     const categories = await prisma.category.findMany({
       include: {
@@ -124,7 +126,7 @@ router.get('/categories', async (req, res) => {
 });
 
 // GET /api/blog/featured - Obtener posts destacados
-router.get('/featured', async (req, res) => {
+router.get('/featured', async (req: AuthRequest, res: Response) => {
   try {
     const featuredPosts = await prisma.post.findMany({
       where: {

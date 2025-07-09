@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../server';
 import { sendContactFormEmail } from '../services/email';
+import { AuthRequest } from '../middleware/auth';
+import { Response } from 'express';
 
 const router = Router();
 
@@ -20,7 +22,7 @@ const contactFormSchema = z.object({
 });
 
 // POST /api/contact - Enviar formulario de contacto
-router.post('/', async (req, res) => {
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
     const contactData = contactFormSchema.parse(req.body);
 
@@ -51,7 +53,7 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/contact - Obtener formularios de contacto (para admin)
-router.get('/', async (req, res) => {
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const { type, isRead, limit = '50', offset = '0' } = req.query;
 
@@ -86,7 +88,7 @@ router.get('/', async (req, res) => {
 });
 
 // PUT /api/contact/:id/read - Marcar formulario como leído
-router.put('/:id/read', async (req, res) => {
+router.put('/:id/read', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
