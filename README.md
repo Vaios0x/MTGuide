@@ -166,16 +166,55 @@ Sistema de emails automáticos con **Resend**:
 
 ## 🚀 Despliegue
 
-### Backend
-```bash
-npm run build
-npm start
-```
+### Backend en Railway
 
-### Frontend
+1. **Crear cuenta en Railway**: Ve a [railway.app](https://railway.app) y conéctate con GitHub
+2. **Crear nuevo proyecto**: "Deploy from GitHub repo"
+3. **Seleccionar el repositorio**: `Vaios0x/MTGuide`
+4. **Configurar variables de entorno** en Railway:
+   ```env
+   DATABASE_URL=tu_url_de_postgresql
+   JWT_SECRET=tu_jwt_secret
+   STRIPE_SECRET_KEY=tu_stripe_key
+   AWS_ACCESS_KEY_ID=tu_aws_key
+   AWS_SECRET_ACCESS_KEY=tu_aws_secret
+   REDIS_URL=tu_redis_url
+   RESEND_API_KEY=tu_resend_key
+   INSTAGRAM_ACCESS_TOKEN=tu_instagram_token
+   ```
+5. **Railway detectará automáticamente** que es un proyecto Node.js y lo desplegará
+
+### Frontend en Vercel
+
+1. **Crear cuenta en Vercel**: Ve a [vercel.com](https://vercel.com) y conéctate con GitHub
+2. **Importar proyecto**: Selecciona tu repositorio `Vaios0x/MTGuide`
+3. **Configurar variables de entorno** en Vercel:
+   ```env
+   VITE_API_URL=https://tu-backend-railway-url.up.railway.app
+   ```
+4. **Vercel detectará automáticamente** la configuración y desplegará el frontend
+
+### URLs de Producción
+
+- **Frontend**: `https://tu-proyecto.vercel.app`
+- **Backend**: `https://tu-proyecto-railway.up.railway.app`
+
+### Desarrollo Local
+
 ```bash
-npm run build
-# Servir archivos estáticos desde dist/
+# Backend
+cd backend
+npm install
+cp env.example .env
+# Configurar variables en .env
+npm run dev
+
+# Frontend
+cd frontend
+npm install
+cp env.example .env
+# Configurar VITE_API_URL en .env
+npm run dev
 ```
 
 ## 🤝 Contribución
