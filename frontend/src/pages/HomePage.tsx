@@ -24,15 +24,6 @@ export default function HomePage() {
     },
   })
 
-  // Obtener posts del blog
-  const { data: blogPosts } = useQuery({
-    queryKey: ['blog-featured'],
-    queryFn: async () => {
-      const response = await api.get('/blog/featured')
-      return response.data
-    },
-  })
-
   return (
     <div>
       {/* Hero Section */}

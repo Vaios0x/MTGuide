@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuthStore } from '../../stores/authStore';
 import { TwoFactorSetup } from '../../components/TwoFactorSetup';
 import { TwoFactorInput } from '../../components/TwoFactorInput';
 import { toast } from 'react-hot-toast';
 
 export const AdminProfile = () => {
-  const { user, enable2FA, disable2FA } = useAuthStore();
+  const { user, disable2FA } = useAuthStore();
   const [showSetup, setShowSetup] = useState(false);
   const [showDisable, setShowDisable] = useState(false);
 
