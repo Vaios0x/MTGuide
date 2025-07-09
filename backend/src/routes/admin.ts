@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../server';
-import { authMiddleware, adminMiddleware } from '../middleware/auth';
+import { authMiddleware, adminMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
@@ -57,7 +57,7 @@ const testimonialSchema = z.object({
 // === EXPERIENCIAS ===
 
 // GET /api/admin/experiences - Obtener todas las experiencias
-router.get('/experiences', async (req, res) => {
+router.get('/experiences', async (req: AuthRequest, res: Response) => {
   try {
     const experiences = await prisma.experience.findMany({
       include: {
@@ -82,7 +82,7 @@ router.get('/experiences', async (req, res) => {
 });
 
 // POST /api/admin/experiences - Crear experiencia
-router.post('/experiences', async (req, res) => {
+router.post('/experiences', async (req: AuthRequest, res: Response) => {
   try {
     const experienceData = experienceSchema.parse(req.body);
     
@@ -101,7 +101,7 @@ router.post('/experiences', async (req, res) => {
 });
 
 // PUT /api/admin/experiences/:id - Actualizar experiencia
-router.put('/experiences/:id', async (req, res) => {
+router.put('/experiences/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const experienceData = experienceSchema.parse(req.body);
@@ -122,7 +122,7 @@ router.put('/experiences/:id', async (req, res) => {
 });
 
 // DELETE /api/admin/experiences/:id - Eliminar experiencia
-router.delete('/experiences/:id', async (req, res) => {
+router.delete('/experiences/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -140,7 +140,7 @@ router.delete('/experiences/:id', async (req, res) => {
 // === FECHAS DE EXPERIENCIAS ===
 
 // POST /api/admin/experience-dates - Crear fecha de experiencia
-router.post('/experience-dates', async (req, res) => {
+router.post('/experience-dates', async (req: AuthRequest, res: Response) => {
   try {
     const dateData = experienceDateSchema.parse(req.body);
     
@@ -159,7 +159,7 @@ router.post('/experience-dates', async (req, res) => {
 });
 
 // PUT /api/admin/experience-dates/:id - Actualizar fecha de experiencia
-router.put('/experience-dates/:id', async (req, res) => {
+router.put('/experience-dates/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const dateData = experienceDateSchema.partial().parse(req.body);
@@ -177,7 +177,7 @@ router.put('/experience-dates/:id', async (req, res) => {
 });
 
 // DELETE /api/admin/experience-dates/:id - Eliminar fecha de experiencia
-router.delete('/experience-dates/:id', async (req, res) => {
+router.delete('/experience-dates/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -195,7 +195,7 @@ router.delete('/experience-dates/:id', async (req, res) => {
 // === POSTS DEL BLOG ===
 
 // GET /api/admin/posts - Obtener todos los posts
-router.get('/posts', async (req, res) => {
+router.get('/posts', async (req: AuthRequest, res: Response) => {
   try {
     const posts = await prisma.post.findMany({
       include: {
@@ -212,7 +212,7 @@ router.get('/posts', async (req, res) => {
 });
 
 // POST /api/admin/posts - Crear post
-router.post('/posts', async (req, res) => {
+router.post('/posts', async (req: AuthRequest, res: Response) => {
   try {
     const postData = postSchema.parse(req.body);
     
@@ -231,7 +231,7 @@ router.post('/posts', async (req, res) => {
 });
 
 // PUT /api/admin/posts/:id - Actualizar post
-router.put('/posts/:id', async (req, res) => {
+router.put('/posts/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const postData = postSchema.parse(req.body);
@@ -249,7 +249,7 @@ router.put('/posts/:id', async (req, res) => {
 });
 
 // DELETE /api/admin/posts/:id - Eliminar post
-router.delete('/posts/:id', async (req, res) => {
+router.delete('/posts/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -267,7 +267,7 @@ router.delete('/posts/:id', async (req, res) => {
 // === TESTIMONIOS ===
 
 // GET /api/admin/testimonials - Obtener todos los testimonios
-router.get('/testimonials', async (req, res) => {
+router.get('/testimonials', async (req: AuthRequest, res: Response) => {
   try {
     const testimonials = await prisma.testimonial.findMany({
       include: {
@@ -289,7 +289,7 @@ router.get('/testimonials', async (req, res) => {
 });
 
 // POST /api/admin/testimonials - Crear testimonio
-router.post('/testimonials', async (req, res) => {
+router.post('/testimonials', async (req: AuthRequest, res: Response) => {
   try {
     const testimonialData = testimonialSchema.parse(req.body);
     
@@ -308,7 +308,7 @@ router.post('/testimonials', async (req, res) => {
 });
 
 // PUT /api/admin/testimonials/:id - Actualizar testimonio
-router.put('/testimonials/:id', async (req, res) => {
+router.put('/testimonials/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const testimonialData = testimonialSchema.parse(req.body);
@@ -326,7 +326,7 @@ router.put('/testimonials/:id', async (req, res) => {
 });
 
 // DELETE /api/admin/testimonials/:id - Eliminar testimonio
-router.delete('/testimonials/:id', async (req, res) => {
+router.delete('/testimonials/:id', async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
@@ -344,7 +344,7 @@ router.delete('/testimonials/:id', async (req, res) => {
 // === DASHBOARD ===
 
 // GET /api/admin/dashboard - Obtener estadísticas del dashboard
-router.get('/dashboard', async (req, res) => {
+router.get('/dashboard', async (req: AuthRequest, res: Response) => {
   try {
     const [
       totalExperiences,
